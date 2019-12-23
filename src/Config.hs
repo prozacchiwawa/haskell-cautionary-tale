@@ -1,7 +1,7 @@
 module Config where
 
 import Prelude
-import Control.Monad.Trans.Reader
+import Control.Monad.Trans.State.Strict
 import Data.Text
 
 data Config =
@@ -10,7 +10,8 @@ data Config =
     , cfgOtherThing :: Int
     }
 
-type UseAppConfig v = ReaderT Config IO v
+-- XXX - Please don't judge me!  Deadline!
+type UseAppConfig v = StateT Config IO v
 
 class HasTheFilename m where
   theFilename :: m Text
@@ -18,11 +19,23 @@ class HasTheFilename m where
 class HasOtherThing m where
   theOtherThing :: m Int
 
-instance HasTheFilename (ReaderT Config IO) where
-  theFilename = asks cfgTheFilename
+class ResetTheFilename m where
+  resetFilename :: Text -> m ()
 
-instance HasOtherThing (ReaderT Config IO) where
-  theOtherThing = asks cfgOtherThing
+instance HasTheFilename (StateT Config IO) where
+  theFilename = do
+    Config {..} <- get
+    pure cfgTheFilename
 
-withConfig :: UseAppConfig x -> Config -> IO x
-withConfig = runReaderT
+instance ResetTheFilename (StateT Config IO) where
+  resetFilename fn = do
+    cfg <- get
+    put $ cfg { cfgTheFilename = fn }
+
+instance HasOtherThing (StateT Config IO) where
+  theOtherThing = do
+    Config {..} <- get
+    pure cfgOtherThing
+
+withConfig :: forall x. UseAppConfig x -> Config -> IO x
+withConfig action cfg = evalStateT action cfg

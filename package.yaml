@@ -31,6 +31,7 @@ library:
     - OverloadedStrings
     - FlexibleInstances
     - AllowAmbiguousTypes
+    - ScopedTypeVariables
 
 executables:
   hs-reader-expl-exe:
