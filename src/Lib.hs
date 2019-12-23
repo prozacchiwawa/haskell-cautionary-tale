@@ -3,26 +3,17 @@ module Lib
     ) where
 
 import Prelude
+
+import Control.Monad.Trans.Reader
 import Data.Text
 
-data Config =
-  Config
-    { theFilename :: Text
-    }
-
-doSomeWork :: Config -> IO ()
-doSomeWork cfg@Config {..} = do
-  putStrLn $ "The filename is " ++ (unpack theFilename)
-
-  doMoreWork cfg
-
-doMoreWork :: Config -> IO ()
-doMoreWork Config {..} = do
-  putStrLn $ "More work: " ++ (unpack theFilename)
+import Aux
+import Config
+import Work
 
 someFunc :: IO ()
 someFunc = do
   let
-    config = Config "foo.txt"
+    config = Config "foo.txt" 3
 
-  doSomeWork config
+  runReaderT doSomeWork config

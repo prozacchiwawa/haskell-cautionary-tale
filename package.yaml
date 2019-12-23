@@ -22,12 +22,15 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - text
+- transformers
 
 library:
   source-dirs: src
   default-extensions:
     - RecordWildCards
     - OverloadedStrings
+    - FlexibleInstances
+    - AllowAmbiguousTypes
 
 executables:
   hs-reader-expl-exe:
