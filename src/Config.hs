@@ -23,3 +23,6 @@ instance HasTheFilename (ReaderT Config IO) where
 
 instance HasOtherThing (ReaderT Config IO) where
   theOtherThing = asks cfgOtherThing
+
+withConfig :: UseAppConfig x -> Config -> IO x
+withConfig = runReaderT

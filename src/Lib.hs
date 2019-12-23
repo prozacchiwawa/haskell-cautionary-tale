@@ -16,4 +16,4 @@ someFunc = do
   let
     config = Config "foo.txt" 3
 
-  runReaderT doSomeWork config
+  withConfig doSomeWork config
